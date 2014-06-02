@@ -1,0 +1,6 @@
+name = "Image-PNM"
+readme_from = "lib/Image/PNM.pod"
+abstract_from = "lib/Image/PNM.pod"
+authors_from = "lib/Image/PNM.pod"
+license = "mit"
+# badges = ["travis"]

@@ -1,0 +1,37 @@
+=encoding utf-8
+
+=head1 NAME
+
+Image::PNM - Interface for PNM format image file
+
+=head1 SYNOPSIS
+
+    use Image::PNM;
+    my $img = Image::PNM->new($filepath);
+    $img->width; $img->height;
+    $img->getpixel(1, 2);
+    $arr_ref = $img->bitmap;
+
+=head1 DESCRIPTION
+
+Image::PNM is a light weight image interface for PNM formatted image file,
+
+which is ppm, pgm, pbm;
+
+
+It can only load image or save image.
+
+But lighter than other Image libraries.
+
+
+=head1 LICENSE
+
+Copyright (C) Aiga Suzuki.
+
+This software is released under MIT License.
+
+=head1 AUTHOR
+
+Aiga Suzuki
+
+=cut
