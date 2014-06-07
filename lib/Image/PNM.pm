@@ -5,8 +5,11 @@ use strict;
 use warnings;
 use Carp;
 use POSIX qw/ceil/;
+use base 'Exporter';
 
-our $VERSION = "0.02";
+our @EXPORT_OK = qw/load_pnm/;
+
+our $VERSION = "0.03";
 
 sub _read;
 sub _read_P1;
@@ -19,20 +22,26 @@ sub _read_P6;
 
 sub new{
     my $package = shift;
-    my $filepath = shift;
-
-    Carp::croak("filename must be specified.\n")
-        unless defined $filepath;
-
-    my $header = _read($filepath);
 
     my $self = {
         bitmap => [],
-        filepath => $filepath,
-        %$header,
     };
 
     return bless $self, $package;
+}
+
+
+sub load{
+    my $self = shift;
+    my $filepath = shift;
+
+    my $header = _read($filepath);
+
+    for(keys %$header){
+        $self->{$_} = $header->{$_};
+    }
+
+    1;
 }
 
 
@@ -73,8 +82,8 @@ sub _read{
 
 sub _read_P1{
     my $filepath = shift;
+    my $self = {};
     
-    my $self;
     my @pool;
     my $line;
     $self->{type} = 'P1';
@@ -110,7 +119,7 @@ sub _read_P1{
 
 sub _read_P2{
     my $filepath = shift;
-    my $self;
+    my $self = {};
     
     my @pool;
     my $line;
@@ -147,14 +156,14 @@ sub _read_P2{
             $self->{bitmap}->[$j]->[$i] = shift @pool;
         }
     }
-
+    
     return $self;
 }
 
 
 sub _read_P3{
     my $filepath = shift;
-    my $self;
+    my $self = {};
     
     my @pool;
     my $line;
@@ -191,14 +200,14 @@ sub _read_P3{
             $self->{bitmap}->[$j]->[$i] = [splice(@pool, 0, 3)];
         }
     }
-    
+
     return $self;
 }
 
 
 sub _read_P4{
     my $filepath = shift;
-    my $self;
+    my $self = {};
     
     my $line;
     $self->{type} = 'P4';
@@ -233,7 +242,7 @@ sub _read_P4{
 
 sub _read_P5{
     my $filepath = shift;
-    my $self;
+    my $self = {};
     
     my $line;
     $self->{type} = 'P5';
@@ -267,13 +276,13 @@ sub _read_P5{
     }
     
     close FH;
-
     return $self;
 }
 
+
 sub _read_P6{
     my $filepath = shift;
-    my $self;
+    my $self = {};
     
     my @pool;
     my $line;
@@ -309,7 +318,6 @@ sub _read_P6{
     }
     
     close FH;
-
     return $self;
 }
 
@@ -343,6 +351,15 @@ sub getpixel{
     my ($x, $y) = @_;
 
     return $self->bitmap->[$y]->[$x];
+}
+
+
+# Exported methods
+sub load_pnm{
+    my $filepath = shift;
+    my $header = _read($filepath);
+
+    return $header->{bitmap};
 }
 
 
