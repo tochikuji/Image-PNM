@@ -44,6 +44,9 @@
       },
       "runtime" : {
          "requires" : {
+            "Carp" : "0",
+            "Exporter" : "0",
+            "File::Slurp" : "0",
             "perl" : "5.014"
          }
       },
@@ -54,5 +57,19 @@
       }
    },
    "release_status" : "unstable",
-   "version" : "0.01"
+   "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/tochikuji/Image-PNM/issues"
+      },
+      "homepage" : "https://github.com/tochikuji/Image-PNM",
+      "repository" : {
+         "type" : "git",
+         "url" : "git://github.com/tochikuji/Image-PNM.git",
+         "web" : "https://github.com/tochikuji/Image-PNM"
+      }
+   },
+   "version" : "0.02",
+   "x_contributors" : [
+      "Aiga Suzuki <tochikuji@gmail.com>"
+   ]
 }

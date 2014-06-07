@@ -7,5 +7,6 @@ is($obj->type, 'P6', 'Is file format correct?');
 is($obj->width, 640, 'width?');
 is($obj->height, 400, 'height?');
 is($obj->bmax, 255, 'bright max?');
+is($obj->getpixel(45, 55)->[2], 249, 'getpixel?');
 
 done_testing;

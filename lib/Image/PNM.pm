@@ -6,7 +6,7 @@ use warnings;
 use Carp;
 use POSIX qw/ceil/;
 
-our $VERSION = "0.01";
+our $VERSION = "0.02";
 
 sub _read;
 sub _read_P1;
@@ -235,7 +235,6 @@ sub _read_P5{
     my $filepath = shift;
     my $self;
     
-    my @pool;
     my $line;
     $self->{type} = 'P5';
 
@@ -255,12 +254,6 @@ sub _read_P5{
         $line =~ /^(\d+)/;
         $self->{bmax} = $1;
         last;
-    }
-
-    while($line = <FH>){
-        next if $line =~ /^\#/;
-
-        push @pool, split(/\s/, $line);
     }
 
     binmode FH;
@@ -304,12 +297,6 @@ sub _read_P6{
         last;
     }
 
-    while($line = <FH>){
-        next if $line =~ /^\#/;
-
-        push @pool, split(/\s/, $line);
-    }
-
     binmode FH;
     my $buf;
 
@@ -325,7 +312,6 @@ sub _read_P6{
 
     return $self;
 }
-
 
 sub width{
     shift->{width}
