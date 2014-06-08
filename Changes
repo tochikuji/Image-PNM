@@ -1,6 +1,13 @@
-Revision history for Perl extension Image-PNM
+1.0.0
+    - Major update, we implemented all functions completely
+    - image saving method, exported 'write_pnm' or instance 'write' is now available.
 
-{{$NEXT}}
+0.0.3
+    - Imcompatible changes, direct 'new' accessor was banned
+    - And 'load_pnm' method was exported
 
-    - original version
+0.0.2
+    - Bug fixed on loading images
 
+0.0.1
+    - Original version

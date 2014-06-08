@@ -3,13 +3,15 @@ package Image::PNM;
 use 5.014;
 use strict;
 use warnings;
+
 use Carp;
 use POSIX qw/ceil/;
+use File::Slurp;
+
 use base 'Exporter';
+our @EXPORT_OK = qw/load_pnm write_pnm/;
 
-our @EXPORT_OK = qw/load_pnm/;
-
-our $VERSION = "0.03";
+our $VERSION = "1.00";
 
 sub _read;
 sub _read_P1;
@@ -18,6 +20,12 @@ sub _read_P3;
 sub _read_P4;
 sub _read_P5;
 sub _read_P6;
+sub _write_P1;
+sub _write_P2;
+sub _write_P3;
+sub _write_P4;
+sub _write_P5;
+sub _write_P6;
 
 
 sub new{
@@ -42,6 +50,13 @@ sub load{
     }
 
     1;
+}
+
+
+sub write{
+    my $self = shift;
+
+    _write(@_);
 }
 
 
@@ -76,6 +91,48 @@ sub _read{
         $self = _read_P6($filepath);
     } else {
         Carp::croak("unknown file type $buf");
+    }
+}
+
+
+sub _write{
+    my $filepath = shift;
+    my $bitmap = shift;
+    my $type = shift;
+    my $bmax = shift;
+    my $comment = shift;
+
+    my $height = scalar @{$bitmap};
+    my $width = scalar @{$bitmap->[0]};
+
+    $type =~ s/^P?(\d)/$1/i;
+
+    if(defined $comment){
+        $comment =~ s/^/# /mg;
+    } else {
+        $comment = '';
+    }
+
+    my $header;
+
+    if($type eq '1'){
+        $header = "P$type\n$comment\n$width $height\n";
+        return _write_P1($bitmap, $width, $height, $header, $filepath);
+    } elsif($type eq '2'){
+        $header = "P$type\n$comment\n$width $height\n$bmax\n";
+        return _write_P2($bitmap, $width, $height, $header, $filepath);
+    } elsif($type eq '3'){
+        $header = "P$type\n$comment\n$width $height\n$bmax\n";
+        return _write_P3($bitmap, $width, $height, $header, $filepath);
+    } elsif($type eq '4'){
+        $header = "P$type\n$comment\n$width $height\n";
+        return _write_P4($bitmap, $width, $height, $header, $filepath);
+    } elsif($type eq '5'){
+        $header = "P$type\n$comment\n$width $height\n$bmax\n";
+        return _write_P5($bitmap, $width, $height, $header, $filepath);
+    } elsif($type eq '6'){
+        $header = "P$type\n$comment\n$width $height\n$bmax\n";
+        return _write_P6($bitmap, $width, $height, $header, $filepath);
     }
 }
 
@@ -321,6 +378,115 @@ sub _read_P6{
     return $self;
 }
 
+
+sub _write_P1{
+    my ($bitmap, $width, $height, $header, $filepath) = @_;
+
+    
+    my $str = '';
+
+    for my $y (0 .. $height - 1){
+        for my $x (0 .. $width - 1){
+            $str .= ' ' unless $x == 0;
+            $str .= $bitmap->[$y]->[$x];
+        }
+        $str .= "\n";
+    }
+    File::Slurp::write_file($filepath, $header . $str);
+
+    1;
+}
+
+
+sub _write_P2{
+    my ($bitmap, $width, $height, $header, $filepath) = @_;
+
+    
+    my $str = '';
+
+    for my $y (0 .. $height - 1){
+        for my $x (0 .. $width - 1){
+            $str .= ' ' unless $x == 0;
+            $str .= $bitmap->[$y]->[$x];
+        }
+        $str .= "\n";
+    }
+    File::Slurp::write_file($filepath, $header . $str);
+
+    1;
+}
+
+
+sub _write_P3{
+    my ($bitmap, $width, $height, $header, $filepath) = @_;
+
+    
+    my $str = '';
+
+    for my $y (0 .. $height - 1){
+        for my $x (0 .. $width - 1){
+            $str .= ' ' unless $x == 0;
+            $str .= join(' ', @{$bitmap->[$y]->[$x]});
+        }
+        $str .= "\n";
+    }
+    File::Slurp::write_file($filepath, $header . $str);
+
+    1;
+}
+
+
+sub _write_P4{
+    my ($bitmap, $width, $height, $header, $filepath) = @_;
+
+    
+    my $str = '';
+
+    for my $y (0 .. $height - 1){
+        for my $x (0 .. $width - 1){
+            $str .= $bitmap->[$y]->[$x];
+        }
+    }
+    File::Slurp::write_file($filepath, $header . pack('B*', $str));
+
+    1;
+}
+
+
+sub _write_P5{
+    my ($bitmap, $width, $height, $header, $filepath) = @_;
+
+    my $str = '';
+    for my $y (0 .. $height - 1){
+        for my $x (0 .. $width - 1){
+            $str .= chr($bitmap->[$y]->[$x]);
+        }
+    }
+
+    File::Slurp::write_file($filepath, $header . $str)
+        or return 0;
+
+    1;
+}
+
+
+sub _write_P6{
+    my ($bitmap, $width, $height, $header, $filepath) = @_;
+
+    my $str = '';
+    for my $y (0 .. $height - 1){
+        for my $x (0 .. $width - 1){
+            $str .= pack('C*', @{$bitmap->[$y]->[$x]});
+        }
+    }
+
+    File::Slurp::write_file($filepath, $header . $str)
+        or return 0;
+
+    1;
+}
+
+
 sub width{
     shift->{width}
 }
@@ -360,6 +526,10 @@ sub load_pnm{
     my $header = _read($filepath);
 
     return $header->{bitmap};
+}
+
+sub write_pnm{
+    _write(@_);
 }
 
 
