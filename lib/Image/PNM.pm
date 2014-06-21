@@ -11,7 +11,7 @@ use File::Slurp;
 use base 'Exporter';
 our @EXPORT_OK = qw/load_pnm write_pnm/;
 
-our $VERSION = "1.00";
+our $VERSION = "1.01";
 
 sub _read;
 sub _read_P1;
@@ -109,6 +109,7 @@ sub _write{
 
     if(defined $comment){
         $comment =~ s/^/# /mg;
+        $comment .= "\n";
     } else {
         $comment = '';
     }
@@ -116,22 +117,22 @@ sub _write{
     my $header;
 
     if($type eq '1'){
-        $header = "P$type\n$comment\n$width $height\n";
+        $header = "P$type\n$comment$width $height\n";
         return _write_P1($bitmap, $width, $height, $header, $filepath);
     } elsif($type eq '2'){
-        $header = "P$type\n$comment\n$width $height\n$bmax\n";
+        $header = "P$type\n$comment$width $height\n$bmax\n";
         return _write_P2($bitmap, $width, $height, $header, $filepath);
     } elsif($type eq '3'){
-        $header = "P$type\n$comment\n$width $height\n$bmax\n";
+        $header = "P$type\n$comment$width $height\n$bmax\n";
         return _write_P3($bitmap, $width, $height, $header, $filepath);
     } elsif($type eq '4'){
-        $header = "P$type\n$comment\n$width $height\n";
+        $header = "P$type\n$comment$width $height\n";
         return _write_P4($bitmap, $width, $height, $header, $filepath);
     } elsif($type eq '5'){
-        $header = "P$type\n$comment\n$width $height\n$bmax\n";
+        $header = "P$type\n$comment$width $height\n$bmax\n";
         return _write_P5($bitmap, $width, $height, $header, $filepath);
     } elsif($type eq '6'){
-        $header = "P$type\n$comment\n$width $height\n$bmax\n";
+        $header = "P$type\n$comment$width $height\n$bmax\n";
         return _write_P6($bitmap, $width, $height, $header, $filepath);
     }
 }
